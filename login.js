@@ -128,10 +128,13 @@ async function sendOTP() {
 
     _currentEmail = email;
 
+    const expires = new Date(Date.now() + OTP_TTL_MS);
+    const timeStr = expires.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
     const result = await emailjs.send(cfg.serviceId, cfg.templateId, {
       to_email: email,
-      otp_code: code,
-      valid_minutes: '10'
+      passcode:  code,
+      time:      timeStr
     });
 
     console.log('EmailJS ok:', result.status, result.text);
