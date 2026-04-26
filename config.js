@@ -12,11 +12,11 @@
 
 window.RSL_CONFIG = {
   // SHA-256 do seu e-mail (em minúsculas)
-  emailHash: 'SUBSTITUA_PELO_HASH_DO_SEU_EMAIL',
+  emailHash: 'cavalcantalines@gmail.com',
 
   // SHA-256 da sua senha
   passwordHash: 'SUBSTITUA_PELO_HASH_DA_SUA_SENHA',
 
   // SHA-256 da chave de recuperação gerada no setup
-  recoveryHash: 'SUBSTITUA_PELO_HASH_DA_CHAVE_DE_RECUPERACAO'
+  recoveryHash: 'RSL-HTJW-4HMV-YU7Q'
 };
