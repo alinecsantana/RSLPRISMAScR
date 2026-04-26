@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSL · PRISMA-ScR</title>
+  <link rel="stylesheet" href="app.css">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── SIDEBAR ── -->
+    <nav id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">RSL</div>
+        <div class="brand-sub">PRISMA-ScR</div>
+      </div>
+      <div class="sidebar-project" id="sidebar-project-name">Projeto não configurado</div>
+
+      <ul class="nav-list" id="nav-list">
+        <li class="nav-group-label">CONFIGURAÇÃO</li>
+        <li class="nav-item" data-view="protocol">
+          <span class="nav-num">1</span>
+          <span class="nav-label">Protocolo</span>
+          <span class="nav-status" id="ns-protocol"></span>
+        </li>
+        <li class="nav-item" data-view="databases">
+          <span class="nav-num">2</span>
+          <span class="nav-label">Bases de Dados</span>
+          <span class="nav-status" id="ns-databases"></span>
+        </li>
+
+        <li class="nav-group-label">IDENTIFICAÇÃO</li>
+        <li class="nav-item" data-view="import">
+          <span class="nav-num">3</span>
+          <span class="nav-label">Importar Resultados</span>
+          <span class="nav-status" id="ns-import"></span>
+        </li>
+        <li class="nav-item" data-view="deduplication">
+          <span class="nav-num">4</span>
+          <span class="nav-label">Deduplicação</span>
+          <span class="nav-status" id="ns-deduplication"></span>
+        </li>
+
+        <li class="nav-group-label">TRIAGEM</li>
+        <li class="nav-item" data-view="screening">
+          <span class="nav-num">5</span>
+          <span class="nav-label">Triagem Título/Resumo</span>
+          <span class="nav-status" id="ns-screening"></span>
+        </li>
+
+        <li class="nav-group-label">ELEGIBILIDADE</li>
+        <li class="nav-item" data-view="eligibility">
+          <span class="nav-num">6</span>
+          <span class="nav-label">Texto Completo</span>
+          <span class="nav-status" id="ns-eligibility"></span>
+        </li>
+
+        <li class="nav-group-label">INCLUÍDOS</li>
+        <li class="nav-item" data-view="extraction">
+          <span class="nav-num">7</span>
+          <span class="nav-label">Extração de Dados</span>
+          <span class="nav-status" id="ns-extraction"></span>
+        </li>
+        <li class="nav-item" data-view="qualitative">
+          <span class="nav-num">8</span>
+          <span class="nav-label">Análise Qualitativa</span>
+          <span class="nav-status" id="ns-qualitative"></span>
+        </li>
+
+        <li class="nav-group-label">SAÍDAS</li>
+        <li class="nav-item" data-view="prisma">
+          <span class="nav-num">⬡</span>
+          <span class="nav-label">Fluxograma PRISMA</span>
+        </li>
+        <li class="nav-item" data-view="audit">
+          <span class="nav-num">⬡</span>
+          <span class="nav-label">Log de Auditoria</span>
+        </li>
+        <li class="nav-item" data-view="report">
+          <span class="nav-num">⬡</span>
+          <span class="nav-label">Relatórios</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button class="btn-sidebar" onclick="App.exportProject()" title="Exportar projeto como JSON">⬇ Exportar</button>
+        <button class="btn-sidebar" onclick="document.getElementById('import-project-input').click()" title="Importar projeto JSON">⬆ Importar</button>
+        <input type="file" id="import-project-input" accept=".json" style="display:none" onchange="App.importProject(event)">
+        <button class="btn-sidebar btn-danger-sidebar" onclick="App.resetProject()" title="Resetar projeto">✕ Resetar</button>
+      </div>
+    </nav>
+
+    <!-- ── MAIN CONTENT ── -->
+    <div id="main-wrapper">
+      <header id="topbar">
+        <div id="topbar-left">
+          <h1 id="view-title">Protocolo da Revisão</h1>
+          <div id="breadcrumb"></div>
+        </div>
+        <div id="topbar-right">
+          <div class="save-badge" id="save-badge">
+            <span class="save-dot" id="save-dot"></span>
+            <span id="save-text">Salvo</span>
+          </div>
+          <span id="save-time"></span>
+        </div>
+      </header>
+
+      <div id="content-area">
+        <!-- views rendered here -->
+      </div>
+    </div>
+
+    <!-- ── MODAL ── -->
+    <div id="modal-overlay" class="hidden" onclick="if(event.target===this)closeModal()">
+      <div id="modal-box">
+        <div id="modal-header">
+          <h2 id="modal-title">Modal</h2>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div id="modal-body"></div>
+        <div id="modal-footer"></div>
+      </div>
+    </div>
+
+    <!-- ── NOTIFICATIONS ── -->
+    <div id="toast-container"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="autosearch.js"></script>
+</body>
+</html>
