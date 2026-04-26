@@ -6,12 +6,12 @@
 // ============================================================
 
 window.RSL_EMAILJS = {
-  publicKey:  'COLE_SUA_PUBLIC_KEY_AQUI',   // Account > API Keys
-  serviceId:  'COLE_SEU_SERVICE_ID_AQUI',   // Email Services > Service ID
-  templateId: 'COLE_SEU_TEMPLATE_ID_AQUI',  // Email Templates > Template ID
+  publicKey:  '1huL_8JCDABijL6pU',   // Account > API Keys
+  serviceId:  'service_q2s23ig',   // Email Services > Service ID
+  templateId: 'template_p5ise8y',  // Email Templates > Template ID
 
   // Apenas estes e-mails podem fazer login (minúsculas)
   allowedEmails: [
-    'seu@email.com'
+    'acs3@ecomp.poli.br'
   ]
 };
