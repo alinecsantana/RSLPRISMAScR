@@ -3,7 +3,48 @@
 // RSL SYSTEM — PRISMA-ScR  v1.0
 // ============================================================
 
-const STORAGE_KEY = 'rsl_prisma_scr_v1';
+const STORAGE_KEY = 'rsl_prisma_scr_v1'; // mantido só para migração legacy
+
+// ── INDEXEDDB (armazenamento principal — sem limite de 5 MB) ──
+const IDB_NAME    = 'rsl_prisma_scr';
+const IDB_VERSION = 1;
+const IDB_STORE   = 'state';
+const IDB_KEY     = 'main';
+let _idb = null;
+
+function openIDB() {
+  if (_idb) return Promise.resolve(_idb);
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess  = e => { _idb = e.target.result; resolve(_idb); };
+    req.onerror    = e => reject(e.target.error);
+  });
+}
+function idbGet() {
+  return openIDB().then(db => new Promise((resolve, reject) => {
+    const req = db.transaction(IDB_STORE, 'readonly')
+                  .objectStore(IDB_STORE).get(IDB_KEY);
+    req.onsuccess = e => resolve(e.target.result ?? null);
+    req.onerror   = e => reject(e.target.error);
+  }));
+}
+function idbPut(data) {
+  return openIDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(data, IDB_KEY);
+    tx.oncomplete = resolve;
+    tx.onerror    = e => reject(e.target.error);
+  }));
+}
+function idbDelete() {
+  return openIDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).delete(IDB_KEY);
+    tx.oncomplete = resolve;
+    tx.onerror    = e => reject(e.target.error);
+  }));
+}
 
 // ── INITIAL STATE ────────────────────────────────────────────
 function createState() {
@@ -82,11 +123,17 @@ function qsa(sel, ctx) { return [...(ctx || document).querySelectorAll(sel)]; }
 // ── STATE ────────────────────────────────────────────────────
 let S = null;
 
-function loadState() {
+async function loadState() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    S = raw ? JSON.parse(raw) : createState();
-    // migração: garante campos novos em estados antigos
+    // migra dado legacy do localStorage para IndexedDB (roda só uma vez)
+    const legacy = localStorage.getItem(STORAGE_KEY);
+    if (legacy) {
+      S = JSON.parse(legacy);
+      localStorage.removeItem(STORAGE_KEY);
+      await idbPut(S);
+    } else {
+      S = (await idbGet()) ?? createState();
+    }
     if (!S.apiKeys)  S.apiKeys  = { openalex: '', semantic: '', ieee: '', springer: '', scopus: '' };
     if (!S.settings) S.settings = { useProxy: true };
   } catch(e) {
@@ -107,33 +154,20 @@ function slimRecords(records) {
 
 function saveState() {
   S.updatedAt = now();
-  const raw = JSON.stringify(S);
-  try {
-    localStorage.setItem(STORAGE_KEY, raw);
-  } catch (e) {
-    if (e.name === 'QuotaExceededError' || (e.message && e.message.toLowerCase().includes('quota'))) {
-      // tenta versão comprimida: remove rawData e trunca abstracts
-      try {
-        const slim = JSON.parse(JSON.stringify(S));
-        slim.records = slimRecords(slim.records);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(slim));
-        S.records = slim.records; // sincroniza memória com versão salva
-        toast('Espaço limitado: abstracts truncados. Use "Exportar" para backup completo.', 'warning', 7000);
-      } catch (e2) {
-        el('save-dot').classList.add('dirty');
-        el('save-text').textContent = 'Erro: limite atingido!';
-        toast('Limite de armazenamento atingido. Exporte o projeto agora (JSON).', 'error', 10000);
-        return;
-      }
-    } else {
-      console.error('Erro ao salvar:', e);
-      return;
-    }
-  }
   el('save-dot').classList.remove('dirty');
-  el('save-text').textContent = 'Salvo';
-  el('save-time').textContent = fmtDate(S.updatedAt);
+  el('save-text').textContent = 'Salvando…';
   updateSidebarBadges();
+  idbPut(JSON.parse(JSON.stringify(S)))
+    .then(() => {
+      el('save-text').textContent = 'Salvo';
+      el('save-time').textContent = fmtDate(S.updatedAt);
+    })
+    .catch(err => {
+      console.error('Erro ao salvar (IDB):', err);
+      el('save-dot').classList.add('dirty');
+      el('save-text').textContent = 'Erro ao salvar!';
+      toast('Erro ao salvar dados. Exporte o projeto por segurança.', 'error', 8000);
+    });
 }
 
 function markDirty() {
@@ -1922,11 +1956,12 @@ window.App = {
   resetProject() {
     if (!confirm('Resetar TODOS os dados? Esta ação não pode ser desfeita.')) return;
     if (!confirm('Confirme novamente: apagar tudo?')) return;
-    localStorage.removeItem(STORAGE_KEY);
-    S = createState();
-    saveState();
-    navigate('protocol');
-    toast('Projeto resetado.', 'warning');
+    idbDelete().then(() => {
+      S = createState();
+      saveState();
+      navigate('protocol');
+      toast('Projeto resetado.', 'warning');
+    });
   }
 };
 
@@ -1945,8 +1980,8 @@ document.addEventListener('keydown', e => {
 });
 
 // ── INIT ─────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  loadState();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadState();
   qsa('.nav-item[data-view]').forEach(li => {
     li.addEventListener('click', () => navigate(li.dataset.view));
   });
