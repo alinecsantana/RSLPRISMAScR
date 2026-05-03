@@ -1086,33 +1086,59 @@ function completeDeduplication() {
 
 // ── VIEW: SCREENING ──────────────────────────────────────────
 let screenFilter = 'pending';
+let screenPage   = 0;
+const SCREEN_PAGE_SIZE = 50;
+let _screenSearchTimer = null;
 
-function renderScreening() {
-  // normaliza registros antigos sem campos esperados
+function normalizeRecords() {
   S.records.forEach(r => {
-    if (!r.screening) r.screening = { decision: 'pending', criteria: [], note: '', decidedAt: null };
-    if (!Array.isArray(r.screening.criteria)) r.screening.criteria = [];
+    if (!r.screening)  r.screening  = { decision: 'pending', criteria: [], note: '', decidedAt: null };
+    if (!Array.isArray(r.screening.criteria))  r.screening.criteria  = [];
     if (!r.eligibility) r.eligibility = { decision: 'pending', criteria: [], note: '', notRetrieved: false, decidedAt: null };
     if (!Array.isArray(r.eligibility.criteria)) r.eligibility.criteria = [];
     if (!r.extraction) r.extraction = { completed: false, completedAt: null, data: {} };
   });
-  const active = S.records.filter(r => !r.isDuplicate);
+}
+
+function renderScreening() {
+  normalizeRecords();
+
+  const active   = S.records.filter(r => !r.isDuplicate);
   const pending  = active.filter(r => !r.screening.decision || r.screening.decision === 'pending');
   const included = active.filter(r => r.screening.decision === 'included');
   const excluded = active.filter(r => r.screening.decision === 'excluded');
   const total = active.length;
-  const done = included.length + excluded.length;
-  const pct = total ? Math.round(done / total * 100) : 0;
-  const phase = S.phases.screening;
-  const excCrit = S.criteria.exclusion;
+  const done  = included.length + excluded.length;
+  const pct   = total ? Math.round(done / total * 100) : 0;
+  const phase    = S.phases.screening;
+  const excCrit  = S.criteria.exclusion;
 
-  const filtered = screenFilter === 'pending' ? pending : screenFilter === 'included' ? included : excluded;
+  const base = screenFilter === 'pending' ? pending
+             : screenFilter === 'included' ? included : excluded;
+
+  const q = (el('screen-search')?.value || '').toLowerCase().trim();
+  const filtered = q
+    ? base.filter(r => r.title.toLowerCase().includes(q) || (r.abstract||'').toLowerCase().includes(q))
+    : base;
+
+  // garante que a página atual existe
+  const totalPages = Math.max(1, Math.ceil(filtered.length / SCREEN_PAGE_SIZE));
+  if (screenPage >= totalPages) screenPage = totalPages - 1;
+
+  const pageRecords = filtered.slice(screenPage * SCREEN_PAGE_SIZE, (screenPage + 1) * SCREEN_PAGE_SIZE);
+
+  const paginationHTML = filtered.length > SCREEN_PAGE_SIZE ? `
+<div class="screen-pagination">
+  <button class="btn btn-sm btn-ghost" onclick="screenGoPage(${screenPage - 1})" ${screenPage === 0 ? 'disabled' : ''}>‹ Anterior</button>
+  <span class="screen-page-info">Página ${screenPage + 1} de ${totalPages} &nbsp;·&nbsp; ${filtered.length} registros</span>
+  <button class="btn btn-sm btn-ghost" onclick="screenGoPage(${screenPage + 1})" ${screenPage >= totalPages - 1 ? 'disabled' : ''}>Próxima ›</button>
+</div>` : '';
 
   el('content-area').innerHTML = `
 <div class="section-header">
   <div>
     <div class="section-title">Triagem — Título e Resumo</div>
-    <div class="section-subtitle">Avalie cada registro com base no título e resumo, aplicando os critérios de inclusão/exclusão do protocolo.</div>
+    <div class="section-subtitle">Avalie cada registro pelo título e resumo. Exibindo ${SCREEN_PAGE_SIZE} por vez para não travar o browser.</div>
   </div>
   ${!phase.completed && pending.length === 0 && total > 0 ?
     `<button class="btn btn-success" onclick="completeScreening()">✅ Concluir Triagem</button>` : ''}
@@ -1141,24 +1167,28 @@ ${phase.completed ? `<div class="phase-banner complete">✅ Triagem concluída e
         (${f==='pending'?pending.length:f==='included'?included.length:excluded.length})
       </button>`).join('')}
     <div style="flex:1"></div>
-    <input type="text" id="screen-search" placeholder="Buscar título…" style="max-width:220px" oninput="renderScreening()">
+    <input type="text" id="screen-search" placeholder="Buscar título…"
+      style="max-width:220px" value="${esc(q)}"
+      oninput="clearTimeout(_screenSearchTimer);_screenSearchTimer=setTimeout(()=>{screenPage=0;renderScreening();},300)">
   </div>
 </div>
 
 ${!total ? `<div class="phase-banner locked">⚠️ Importe registros e conclua a deduplicação antes de triar.</div>` :
-!filtered.length ? `<div class="empty-state"><div class="empty-icon">✓</div><div class="empty-title">Nenhum registro nesta categoria</div></div>` :
-filtered.filter(r => {
-  const q = el('screen-search')?.value?.toLowerCase() || '';
-  return !q || r.title.toLowerCase().includes(q) || (r.abstract||'').toLowerCase().includes(q);
-}).map(r => renderScreeningCard(r, excCrit)).join('')
+ !filtered.length ? `<div class="empty-state"><div class="empty-icon">✓</div><div class="empty-title">Nenhum registro nesta categoria</div></div>` :
+ paginationHTML + pageRecords.map(r => renderScreeningCard(r, excCrit)).join('') + paginationHTML
 }
 
 <div class="keyboard-hint">
   <span><kbd>I</kbd> Incluir</span>
   <span><kbd>E</kbd> Excluir</span>
-  <span><kbd>↑↓</kbd> Navegar</span>
 </div>
 `;
+}
+
+function screenGoPage(n) {
+  screenPage = n;
+  renderScreening();
+  el('content-area').scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderScreeningCard(r, excCrit) {
@@ -1196,7 +1226,7 @@ function renderScreeningCard(r, excCrit) {
     </select>
     <button class="btn btn-sm btn-danger" onclick="screenDecide('${r.id}','excluded')">✕ Excluir</button>
     ${decision !== 'pending' ? `<button class="btn btn-sm btn-ghost" onclick="screenDecide('${r.id}','pending')">↩ Reverter</button>` : ''}
-    <input type="text" id="note-${r.id}" placeholder="Nota (opcional)" value="${esc(r.screening.note)}" style="flex:1;min-width:120px;font-size:12px" onchange="saveScreenNote('${r.id}',this.value)">
+    <input type="text" id="note-${r.id}" placeholder="Nota (opcional)" value="${esc(r.screening.note||'')}" style="flex:1;min-width:120px;font-size:12px" onchange="saveScreenNote('${r.id}',this.value)">
   </div>
   ${r.screening.criteria?.length ? `<div class="mt-4">${r.screening.criteria.map(cid => {
     const c = S.criteria.exclusion.find(x => x.id === cid);
@@ -1206,7 +1236,7 @@ function renderScreeningCard(r, excCrit) {
 </div>`;
 }
 
-function setScreenFilter(f) { screenFilter = f; renderScreening(); }
+function setScreenFilter(f) { screenFilter = f; screenPage = 0; renderScreening(); }
 
 function toggleAbstract(id) {
   const abs = el(`abs-${id}`);
