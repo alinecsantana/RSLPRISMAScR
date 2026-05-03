@@ -1,5 +1,5 @@
 /* ============================================================
-   RSL SYSTEM — PRISMA-ScR  |  app.css
+   RSL SYSTEM â€” PRISMA-ScR  |  app.css
    ============================================================ */
 
 :root {
@@ -67,7 +67,7 @@ html, body, #app {
   overflow: hidden;
 }
 
-/* ── SIDEBAR ── */
+/* â”€â”€ SIDEBAR â”€â”€ */
 #sidebar {
   width: var(--sidebar-w);
   background: var(--slate-900);
@@ -184,7 +184,7 @@ html, body, #app {
 .btn-danger-sidebar { background: rgba(220,38,38,.25); color: #fca5a5; }
 .btn-danger-sidebar:hover { background: rgba(220,38,38,.4); }
 
-/* ── MAIN ── */
+/* â”€â”€ MAIN â”€â”€ */
 #main-wrapper {
   flex: 1;
   display: flex;
@@ -231,7 +231,7 @@ html, body, #app {
   padding: 24px;
 }
 
-/* ── CARDS ── */
+/* â”€â”€ CARDS â”€â”€ */
 .card {
   background: #fff;
   border: 1px solid var(--slate-200);
@@ -262,7 +262,7 @@ html, body, #app {
   border-radius: 0 0 var(--radius) var(--radius);
 }
 
-/* ── SECTION ── */
+/* â”€â”€ SECTION â”€â”€ */
 .section-header {
   display: flex;
   align-items: flex-start;
@@ -281,7 +281,7 @@ html, body, #app {
   margin-top: 3px;
 }
 
-/* ── BUTTONS ── */
+/* â”€â”€ BUTTONS â”€â”€ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -322,7 +322,7 @@ html, body, #app {
 
 .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* ── FORMS ── */
+/* â”€â”€ FORMS â”€â”€ */
 .form-grid { display: grid; gap: 16px; }
 .form-grid-2 { grid-template-columns: 1fr 1fr; }
 .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
@@ -364,7 +364,7 @@ input::placeholder, textarea::placeholder { color: var(--slate-400); }
 
 .form-hint { font-size: 11px; color: var(--slate-400); margin-top: 2px; }
 
-/* ── TABLES ── */
+/* â”€â”€ TABLES â”€â”€ */
 .table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--slate-200); }
 table {
   width: 100%;
@@ -397,7 +397,7 @@ td.td-actions { white-space: nowrap; }
 .td-muted { color: var(--slate-500); }
 .td-mono { font-family: var(--font-mono); font-size: 11px; color: var(--slate-500); }
 
-/* ── BADGES ── */
+/* â”€â”€ BADGES â”€â”€ */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -413,7 +413,7 @@ td.td-actions { white-space: nowrap; }
 .badge-amber   { background: var(--amber-100); color: var(--amber-600); }
 .badge-slate   { background: var(--slate-100); color: var(--slate-600); }
 
-/* ── STATS ROW ── */
+/* â”€â”€ STATS ROW â”€â”€ */
 .stats-row {
   display: flex;
   gap: 14px;
@@ -442,7 +442,7 @@ td.td-actions { white-space: nowrap; }
 .stat-card.amber .stat-value { color: var(--amber-600); }
 .stat-card.slate .stat-value { color: var(--slate-500); }
 
-/* ── PROGRESS BAR ── */
+/* â”€â”€ PROGRESS BAR â”€â”€ */
 .progress-bar-wrap {
   background: var(--slate-200);
   border-radius: 99px;
@@ -459,7 +459,7 @@ td.td-actions { white-space: nowrap; }
 .progress-bar-fill.green { background: var(--green-500); }
 .progress-bar-fill.red   { background: var(--red-500); }
 
-/* ── CRITERIA TAGS ── */
+/* â”€â”€ CRITERIA TAGS â”€â”€ */
 .criteria-tag {
   display: inline-flex;
   align-items: center;
@@ -481,7 +481,7 @@ td.td-actions { white-space: nowrap; }
 }
 .criteria-tag-rm:hover { opacity: 1; }
 
-/* ── SCREENING CARD ── */
+/* â”€â”€ SCREENING CARD â”€â”€ */
 .screening-card {
   background: #fff;
   border: 1px solid var(--slate-200);
@@ -530,7 +530,7 @@ td.td-actions { white-space: nowrap; }
   flex-wrap: wrap;
 }
 
-/* ── AUDIT LOG ── */
+/* â”€â”€ AUDIT LOG â”€â”€ */
 .audit-entry {
   display: flex;
   gap: 12px;
@@ -551,7 +551,7 @@ td.td-actions { white-space: nowrap; }
 .audit-text { color: var(--slate-700); flex: 1; }
 .audit-detail { color: var(--slate-400); font-size: 12px; margin-top: 2px; }
 
-/* ── PRISMA FLOW DIAGRAM ── */
+/* â”€â”€ PRISMA FLOW DIAGRAM â”€â”€ */
 .prisma-container {
   display: flex;
   justify-content: center;
@@ -637,7 +637,7 @@ td.td-actions { white-space: nowrap; }
   padding: 0 4px;
 }
 .prisma-side-arrow::before {
-  content: '→';
+  content: 'â†’';
   font-size: 18px;
   color: var(--slate-400);
 }
@@ -653,7 +653,7 @@ td.td-actions { white-space: nowrap; }
   padding-left: 4px;
 }
 
-/* ── MODAL ── */
+/* â”€â”€ MODAL â”€â”€ */
 #modal-overlay {
   position: fixed;
   inset: 0;
@@ -708,7 +708,7 @@ td.td-actions { white-space: nowrap; }
   flex-shrink: 0;
 }
 
-/* ── TOASTS ── */
+/* â”€â”€ TOASTS â”€â”€ */
 #toast-container {
   position: fixed;
   bottom: 20px;
@@ -739,7 +739,7 @@ td.td-actions { white-space: nowrap; }
   to   { transform: translateX(0);    opacity: 1; }
 }
 
-/* ── STEPS WIZARD ── */
+/* â”€â”€ STEPS WIZARD â”€â”€ */
 .steps-row {
   display: flex;
   align-items: center;
@@ -772,13 +772,13 @@ td.td-actions { white-space: nowrap; }
 .step-line { width: 30px; height: 2px; background: var(--slate-200); flex-shrink: 0; }
 .step-line.done { background: var(--green-500); }
 
-/* ── MAPPING TABLE ── */
+/* â”€â”€ MAPPING TABLE â”€â”€ */
 .mapping-table { width: 100%; border-collapse: collapse; }
 .mapping-table th { background: var(--slate-50); padding: 8px 10px; font-size: 11px; text-transform: uppercase; color: var(--slate-500); border-bottom: 1px solid var(--slate-200); }
 .mapping-table td { padding: 6px 10px; border-bottom: 1px solid var(--slate-100); font-size: 13px; vertical-align: middle; }
 .mapping-table select { padding: 4px 8px; font-size: 12px; }
 
-/* ── EMPTY STATE ── */
+/* â”€â”€ EMPTY STATE â”€â”€ */
 .empty-state {
   text-align: center;
   padding: 48px 20px;
@@ -788,7 +788,7 @@ td.td-actions { white-space: nowrap; }
 .empty-title { font-size: 16px; font-weight: 600; color: var(--slate-500); margin-bottom: 6px; }
 .empty-text  { font-size: 13px; }
 
-/* ── CHECKLIST ── */
+/* â”€â”€ CHECKLIST â”€â”€ */
 .checklist-item {
   display: flex;
   align-items: flex-start;
@@ -812,7 +812,7 @@ td.td-actions { white-space: nowrap; }
   margin-top: 1px;
 }
 
-/* ── MISC ── */
+/* â”€â”€ MISC â”€â”€ */
 .hidden { display: none !important; }
 .text-center { text-align: center; }
 .text-right  { text-align: right; }
@@ -848,7 +848,7 @@ pre {
   word-break: break-all;
 }
 
-/* ── QUALITATIVE CQ CARDS ── */
+/* â”€â”€ QUALITATIVE CQ CARDS â”€â”€ */
 .cq-card {
   background: #fff;
   border: 1px solid var(--slate-200);
@@ -881,7 +881,7 @@ pre {
 .cq-question { font-weight: 600; color: var(--blue-900); font-size: 14px; }
 .cq-body { padding: 16px; }
 
-/* ── DUPLICATE CARD ── */
+/* â”€â”€ DUPLICATE CARD â”€â”€ */
 .dup-group {
   background: var(--amber-50);
   border: 1px solid var(--amber-200);
@@ -908,7 +908,7 @@ pre {
 }
 .dup-item:last-child { border-bottom: none; }
 
-/* ── PHASE STATUS BANNER ── */
+/* â”€â”€ PHASE STATUS BANNER â”€â”€ */
 .phase-banner {
   display: flex;
   align-items: center;
@@ -923,7 +923,7 @@ pre {
 .phase-banner.ongoing  { background: var(--blue-50);  border: 1px solid var(--blue-200);  color: var(--blue-800); }
 .phase-banner.locked   { background: var(--slate-100);border: 1px solid var(--slate-300); color: var(--slate-600); }
 
-/* ── SCREENING KEYBOARD HINT ── */
+/* â”€â”€ SCREENING KEYBOARD HINT â”€â”€ */
 .keyboard-hint {
   position: fixed;
   bottom: 24px;
@@ -947,7 +947,7 @@ kbd {
   font-size: 11px;
 }
 
-/* ── REPORT ── */
+/* â”€â”€ REPORT â”€â”€ */
 .report-section { margin-bottom: 24px; }
 .report-section h3 { font-size: 15px; font-weight: 700; color: var(--slate-700); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid var(--blue-200); }
 .report-item { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--slate-100); font-size: 13px; }
@@ -955,9 +955,9 @@ kbd {
 .report-item-key { color: var(--slate-500); min-width: 160px; }
 .report-item-val { color: var(--slate-800); font-weight: 500; }
 
-/* ══════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    AUTH OVERLAY
-   ══════════════════════════════════════════════════════════════ */
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 #auth-overlay {
   position: fixed;
   inset: 0;
@@ -1048,3 +1048,18 @@ kbd {
 }
 
 .w-full { width: 100%; }
+
+/* â”€â”€ SCREEN PAGINATION â”€â”€ */
+.screen-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 0;
+  margin: 8px 0;
+}
+.screen-page-info {
+  font-size: 13px;
+  color: var(--slate-600);
+  font-weight: 500;
+}
